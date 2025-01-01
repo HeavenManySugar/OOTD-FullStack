@@ -7,8 +7,8 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - db-data:/var/opt/mssql/data
-      - ./OOTDV2.bak:/var/opt/mssql/backup/OOTDV2.bak
+      - ./db-data:/var/opt/mssql/data
+      - ./backend/OOTDV2.bak:/var/opt/mssql/backup/OOTDV2.bak
     networks:
       - ootd-network
     healthcheck:
@@ -38,12 +38,6 @@ services:
       - dataprotection-keys:/root/.aspnet/DataProtection-Keys
     networks:
       - ootd-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/api/Status"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   frontend:
     build:
       context: ./frontend
@@ -54,7 +48,7 @@ services:
       database:
         condition: service_healthy
       backend:
-        condition: service_healthy
+        condition: service_started
     restart: always
     networks:
       - ootd-network
