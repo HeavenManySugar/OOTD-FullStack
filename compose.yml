@@ -5,9 +5,9 @@ services:
       ACCEPT_EULA: Y
       MSSQL_SA_PASSWORD: Abcd1234
     volumes:
-      - ./db-data:/var/opt/mssql/data
+      - ./db-data:/var/opt/mssql/data:rw
       - ./backend/OOTDV2.bak:/var/opt/mssql/backup/OOTDV2.bak:ro
-      - ./entrypoint.sh:/usr/src/app/entrypoint.sh:ro
+      - ./entrypoint.sh:/usr/src/app/entrypoint.sh:rw
     networks:
       - ootd-network
     healthcheck:
@@ -17,34 +17,34 @@ services:
       retries: 5
     restart: unless-stopped
     working_dir: /usr/src/app
-    command: sh -c './entrypoint.sh & /opt/mssql/bin/sqlservr;'
+    command: sh -c ' chmod +x ./entrypoint.sh; ./entrypoint.sh & /opt/mssql/bin/sqlservr;'
 
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    depends_on:
-      database:
-        condition: service_healthy
-    restart: always
-    volumes:
-      - dataprotection-keys:/root/.aspnet/DataProtection-Keys
-    networks:
-      - ootd-network
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "4173:4173"
-    depends_on:
-      database:
-        condition: service_healthy
-      backend:
-        condition: service_started
-    restart: always
-    networks:
-      - ootd-network
+  # backend:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   depends_on:
+  #     database:
+  #       condition: service_healthy
+  #   restart: always
+  #   volumes:
+  #     - dataprotection-keys:/root/.aspnet/DataProtection-Keys
+  #   networks:
+  #     - ootd-network
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "4173:4173"
+  #   depends_on:
+  #     database:
+  #       condition: service_healthy
+  #     backend:
+  #       condition: service_started
+  #   restart: always
+  #   networks:
+  #     - ootd-network
 
 volumes:
   db-data:
