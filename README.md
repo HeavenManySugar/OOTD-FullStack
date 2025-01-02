@@ -1,4 +1,40 @@
 # OOTD-FullStack
-run OOTD frontend and backend in Docker compose
 
-note: first launch need to wait at least 30 seconds to restore database
+Run OOTD frontend and backend using Docker Compose.
+
+**Note:** The first launch requires at least 30 seconds to restore the database.
+
+## Getting Started
+
+This branch is designed for Docker Compose.
+
+First, clone this repository:
+
+```bash
+git clone --recursive https://github.com/HeavenManySugar/OOTD-FullStack.git
+```
+
+Navigate to the OOTD-FullStack directory and build the containers:
+
+```bash
+docker compose build --no-cache
+```
+
+After the build is complete, you can start the system with:
+
+```bash
+docker compose up
+```
+
+This will run the database, backend, and frontend systems.
+
+**Note:** The first startup requires at least 30 seconds.
+
+## Rebuilding Containers
+If you make changes to the frontend or backend, you need to rebuild the containers:
+
+```bash
+docker compose build --no-cache
+```
+
+**Note:** The database files are stored in the db-data directory in the same folder. Updating should not destroy the data in the database.
