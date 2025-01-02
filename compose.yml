@@ -6,7 +6,7 @@ services:
       MSSQL_SA_PASSWORD: Abcd1234
     volumes:
       - db-data:/var/opt/mssql
-      - ./backend/OOTDV2.bak:/var/opt/mssql/backup/OOTDV2.bak:ro
+      - ./backend/OOTDV3.bak:/var/opt/mssql/backup/OOTD.bak:ro
       - ./entrypoint.sh:/usr/src/app/entrypoint.sh:rw
     networks:
       - ootd-network
