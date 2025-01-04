@@ -1,36 +1,12 @@
 services:
-  database:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    environment:
-      ACCEPT_EULA: Y
-      MSSQL_SA_PASSWORD: Abcd1234
-    volumes:
-      - db-data:/var/opt/mssql
-      - ./backend/OOTDV3.bak:/var/opt/mssql/backup/OOTD.bak:ro
-      - ./entrypoint.sh:/usr/src/app/entrypoint.sh:rw
-    networks:
-      - ootd-network
-    healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P Abcd1234 -C -Q 'SELECT 1'"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
-    working_dir: /usr/src/app
-    command: sh -c ' chmod +x ./entrypoint.sh; ./entrypoint.sh & /opt/mssql/bin/sqlservr;'
-
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    depends_on:
-      database:
-        condition: service_healthy
     restart: always
     volumes:
       - dataprotection-keys:/root/.aspnet/DataProtection-Keys
-    networks:
-      - ootd-network
+    network_mode: bridge
   frontend:
     build:
       context: ./frontend
@@ -38,18 +14,11 @@ services:
     ports:
       - "4173:4173"
     depends_on:
-      database:
-        condition: service_healthy
       backend:
         condition: service_started
     restart: always
-    networks:
-      - ootd-network
+    network_mode: bridge
 
 volumes:
   db-data:
   dataprotection-keys:
-
-networks:
-  ootd-network:
-    driver: bridge
