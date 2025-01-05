@@ -36,7 +36,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "4173:4173"
+      - "4173:80"
     depends_on:
       database:
         condition: service_healthy
